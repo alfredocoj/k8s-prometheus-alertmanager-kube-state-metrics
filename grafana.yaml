@@ -28,4 +28,4 @@ spec:
               value: "grafana-kubernetes-app"
       volumes:
         - name: grafana-storage
-emptyDir: {}
+#emptyDir: {}
