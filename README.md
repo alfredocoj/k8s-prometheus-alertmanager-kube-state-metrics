@@ -79,3 +79,5 @@ FYI to Grafana people: it would probably be good if somebody documents this some
 https://medium.com/htc-research-engineering-blog/monitoring-kubernetes-clusters-with-grafana-e2a413febefd
 
 https://github.com/grafana/kubernetes-app/issues/35
+
+https://github.com/kubernetes/kube-state-metrics/issues/295
