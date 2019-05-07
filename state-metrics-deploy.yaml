@@ -19,6 +19,19 @@ spec:
       containers:
         - name: kube-state-metrics
           image: quay.io/coreos/kube-state-metrics:v1.1.0
+          args:
+            - --collectors=daemonsets
+            - --collectors=deployments
+            - --collectors=limitranges
+            - --collectors=nodes
+            - --collectors=replicasets
+            - --collectors=replicationcontrollers
+            - --collectors=resourcequotas
+            - --collectors=services
+            - --collectors=jobs
+            - --collectors=statefulsets
+            - --collectors=persistentvolumeclaims
+            - --collectors=namespaces
           ports:
             - name: http-metrics
               containerPort: 8080
