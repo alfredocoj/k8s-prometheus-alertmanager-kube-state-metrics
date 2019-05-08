@@ -2,7 +2,7 @@ kind: DaemonSet
 apiVersion: extensions/v1beta1
 metadata:
   name: node-exporter
-  namespace: monitoring
+  namespace: kube-system
 spec:
   selector:
     matchLabels:
