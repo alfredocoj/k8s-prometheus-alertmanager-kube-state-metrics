@@ -39,7 +39,9 @@ spec:
             - name: proc
               readOnly: true
               mountPath: /proc_host
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
+      nodeSelector:
+        kubernetes.io/hostname: k8s-node-97
       restartPolicy: Always
       hostNetwork: true
       hostPID: true

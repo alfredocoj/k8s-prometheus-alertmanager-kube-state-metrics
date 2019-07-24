@@ -13,7 +13,7 @@ spec:
       containers:
         - name: grafana
           image: grafana/grafana
-          command: ["apt install nano htop iputils-ping -y"]
+          #command: ["apt install nano htop iputils-ping -y"]
           ports:
             - containerPort: 3000
               protocol: TCP
@@ -24,9 +24,13 @@ spec:
             - name: GF_SERVER_HTTP_PORT
               value: "3000"
             - name: GF_SECURITY_ADMIN_PASSWORD
-              value: "helloworld"
+              value: "Oderfla10"
             - name: GF_INSTALL_PLUGINS
               value: "grafana-kubernetes-app"
+      nodeSelector:
+        kubernetes.io/hostname: k8s-node-97
       volumes:
         - name: grafana-storage
+          hostPath:
+            path: /var/lib/grafana
 #emptyDir: {}

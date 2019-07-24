@@ -23,6 +23,8 @@ spec:
           volumeMounts:
             - mountPath: "/etc/prometheus"
               name: config-prometheus
+      nodeSelector:
+        kubernetes.io/hostname: k8s-node-97
       volumes:
         - name: config-prometheus
           configMap:

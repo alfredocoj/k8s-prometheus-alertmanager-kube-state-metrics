@@ -41,3 +41,5 @@ spec:
               port: 8080
             initialDelaySeconds: 5
             timeoutSeconds: 5
+      nodeSelector:
+        kubernetes.io/hostname: k8s-node-97
