@@ -10,13 +10,16 @@ metadata:
   name: prometheus
   namespace: kube-system
 rules:
-  - apiGroups: [""]
+  - apiGroups: ["", "extensions", "apps"]
     resources:
       - nodes
+      - nodes/metrics
       - nodes/proxy
       - services
       - endpoints
       - pods
+      - deployments
+      - events
     verbs: ["get", "list", "watch"]
   - apiGroups:
       - extensions

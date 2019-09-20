@@ -27,7 +27,10 @@ spec:
           image: quay.io/prometheus/node-exporter:v0.15.0
           args:
             - --path.procfs=/proc_host
+            - --path.procfs=/host/proc
             - --path.sysfs=/host_sys
+            - --collector.filesystem.ignored-mount-points
+            - '^\/rootfs\/(var\/lib|run\/docker|home\/kubernetes)\/.*'
           ports:
             - name: node-exporter
               hostPort: 9100

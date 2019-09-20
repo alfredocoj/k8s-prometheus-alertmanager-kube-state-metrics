@@ -18,12 +18,18 @@ spec:
       serviceAccountName: kube-state-metrics
       containers:
         - name: kube-state-metrics
-          image: quay.io/coreos/kube-state-metrics:v1.1.0
+          image: quay.io/coreos/kube-state-metrics:v1.7.2
+          ##v1.1.0
+          imagePullPolicy: Always
           args:
+            - --collectors=limitranges
             - --collectors=daemonsets
             - --collectors=deployments
-            - --collectors=limitranges
+            #- --collectors=limitranges
             - --collectors=nodes
+            - --collectors=pods
+            #- --collectors=poddisruptionbudgets
+            #- --collectors=containers
             - --collectors=replicasets
             - --collectors=replicationcontrollers
             - --collectors=resourcequotas
@@ -31,10 +37,17 @@ spec:
             - --collectors=jobs
             - --collectors=statefulsets
             - --collectors=persistentvolumeclaims
+            #- --collectors=persistentvolumes
             - --collectors=namespaces
+            - --logtostderr
+            #- --kubelet-preferred-address-types=InternalIP
+            #- --kubelet-insecure-tls
           ports:
             - name: http-metrics
               containerPort: 8080
+          volumeMounts:
+            - name: tmp-dir
+              mountPath: /tmp
           readinessProbe:
             httpGet:
               path: /healthz
@@ -43,3 +56,7 @@ spec:
             timeoutSeconds: 5
       nodeSelector:
         kubernetes.io/hostname: k8s-node-97
+      volumes:
+        - name: tmp-dir
+          hostPath:
+            path: /tmp

@@ -167,3 +167,19 @@ https://github.com/grafana/kubernetes-app/issues/35
 https://github.com/kubernetes/kube-state-metrics/issues/295
 
 https://medium.com/faun/configuring-ha-kubernetes-cluster-on-bare-metal-servers-monitoring-logs-and-usage-examples-3-3-340357f21453
+
+https://www.base64decode.org/
+##
+https://github.com/kubernetes/kubernetes/blob/master/cluster/addons/prometheus/node-exporter-ds.yml
+
+https://github.com/helm/charts/blob/master/stable/kube-state-metrics/templates/deployment.yaml
+
+https://github.com/giantswarm/prometheus
+
+https://github.com/openshift/cluster-monitoring-operator/blob/master/assets/prometheus-k8s/rules.yaml
+
+https://grafana.com/grafana/dashboards/162
+
+https://www.replex.io/blog/kubernetes-in-production-the-ultimate-guide-to-monitoring-resource-metrics
+
+https://github.com/google/cadvisor/blob/master/deploy/kubernetes/base/daemonset.yaml
