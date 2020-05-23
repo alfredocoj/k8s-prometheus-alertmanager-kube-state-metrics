@@ -1,0 +1,75 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-rules
+  labels:
+    name: prometheus-rules
+  namespace: tasks-monitoring
+data:
+  rules.yml: |-
+    groups:
+    - name: RH
+      rules:
+      - alert: KubePodExecutionFailedRh
+        annotations:
+          summary: 'Falha durante a execução da task.'
+          description: 'O container {{$labels.container}} no pod {{$labels.pod}} no namespace {{$labels.namespace}} falhou ao executar.'
+        expr: |
+          (kube_pod_container_status_terminated_reason{pod=~"rh-task.+",pod!~".+scdf.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+        for: 1m
+        labels:
+          team: rh
+    
+      - alert: KubeContainerCreatingErrorRh
+        annotations:
+          summary: 'Erro ao iniciar o container da task'
+          description: 'Falha ao criar o container para a task - pod {{$labels.pod}} no namespace {{$labels.namespace}}.'
+        expr: |
+          (kube_pod_container_status_waiting_reason{pod=~"rh-task.+",pod!~".+scdf.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+        for: 1m
+        labels:
+          team: rh
+    
+      - alert: KubePodUnschedulableRh
+        annotations:
+          summary: 'Falha ao iniciar a task.'
+          description: 'Erro ao criar a estrutura para execução (Falta de recurso)'
+        expr: |
+          kube_pod_status_unschedulable{pod=~"rh-task.+",pod!~".+scdf.+"} * on(pod) (time() - kube_pod_created < 100)
+        for: 1m
+        labels:
+          team: rh
+    
+    - name: contabil
+      rules:
+      - alert: KubePodExecutionFailedContabil
+        annotations:
+          summary: 'Falha durante a execução da task.'
+          description: 'O container {{$labels.container}} no pod {{$labels.pod}} no namespace {{$labels.namespace}} falhou ao executar.'
+        expr: |
+          (kube_pod_container_status_terminated_reason{pod=~"contabil-task.+",pod!~".+scdf.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+        for: 1m
+        labels:
+          team: contabil
+    
+      - alert: KubeContainerCreatingErrorContabil
+        annotations:
+          summary: 'Erro ao iniciar o container da task'
+          description: 'Falha ao criar o container para a task - pod {{$labels.pod}} no namespace {{$labels.namespace}}.'
+        expr: |
+          (kube_pod_container_status_waiting_reason{pod=~"contabil-task.+",pod!~".+scdf.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+        for: 1m
+        labels:
+          team: contabil
+    
+      - alert: KubePodUnschedulableContabil
+        annotations:
+          summary: 'Falha ao iniciar a task.'
+          description: 'Erro ao criar a estrutura para execução (Falta de recurso)'
+        expr: |
+          kube_pod_status_unschedulable{pod=~"contabil-task.+",pod!~".+scdf.+"} * on(pod) (time() - kube_pod_created < 100)
+        for: 1m
+        labels:
+          team: contabil
+

@@ -1,0 +1,148 @@
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: alertmanager
+  namespace: tasks-monitoring
+data:
+  config.yml: |-
+    global:
+      resolve_timeout: 5m
+      slack_api_url: "https://hooks.slack.com/services/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"
+    
+    templates:
+    - '/etc/alertmanager-templates/*.tmpl'
+    route:
+      group_by: ['alertname', 'cluster', 'service']
+      group_wait: 10s
+      group_interval: 1m
+      repeat_interval: 5m
+      receiver: devops
+      routes:
+      - match:
+          team: devops
+        receiver: devops
+      - match:
+          team: devops
+        receiver: ittask
+      - match:
+          team: contabil
+        receiver: contabil
+      - match:
+          team: rh
+        receiver: rh
+      - match:
+          team: compras
+        receiver: compras
+      - match:
+          team: estoque
+        receiver: estoque
+      - match:
+          team: financeiro
+        receiver: financeiro
+      - match:
+          team: vendas
+        receiver: vendas
+      - match:
+          team: wms
+        receiver: wms
+      - match:
+          team: catchup
+        receiver: catchup
+      - match:
+          team: ecommerce
+        receiver: ecommerce
+      - match:
+          team: chatbot
+        receiver: chatbot
+      - match:
+          team: crm
+        receiver: crm
+      - match:
+          team: dw
+        receiver: dw
+      - match:
+          team: bank
+        receiver: bank
+    
+    receivers:
+    - name: 'contabil'
+      webhook_configs:
+      - url: 'http://eng-telegram-bot-contabil:8088'
+        send_resolved: false
+    
+    - name: 'rh'
+      webhook_configs:
+      - url: 'http://eng-telegram-bot-rh:8089'
+        send_resolved: false
+    
+    - name: 'estoque'
+      webhook_configs:
+      - url: 'http://eng-telegram-bot-estoque:8090'
+        send_resolved: false
+    
+    - name: 'financeiro'
+      webhook_configs:
+      - url: 'http://eng-telegram-bot-financeiro:8091'
+        send_resolved: false
+    
+    - name: 'vendas'
+      webhook_configs:
+      - url: 'http://eng-telegram-bot-vendas:8092'
+        send_resolved: false
+    
+    - name: 'wms'
+      webhook_configs:
+      - url: 'http://eng-telegram-bot-wms:8093'
+        send_resolved: false
+    
+    - name: 'catchup'
+      webhook_configs:
+      - url: 'http://eng-telegram-bot-catchup:8094'
+        send_resolved: false
+    
+    - name: 'compras'
+      webhook_configs:
+      - url: 'http://eng-telegram-bot-compras:8095'
+        send_resolved: false
+    
+    - name: 'ecommerce'
+      webhook_configs:
+      - url: 'http://eng-telegram-bot-ecommerce:8096'
+        send_resolved: false
+    
+    - name: 'chatbot'
+      webhook_configs:
+      - url: 'http://eng-telegram-bot-chatbot:8097'
+        send_resolved: false
+    
+     - name: 'crm'
+      webhook_configs:
+      - url: 'http://eng-telegram-bot-crm:8098'
+        send_resolved: false
+    
+     - name: 'dw'
+      webhook_configs:
+      - url: 'http://eng-telegram-bot-dw:8099'
+        send_resolved: false
+    
+    - name: 'bank'
+      webhook_configs:
+      - url: 'http://eng-telegram-bot-bank:8100'
+        send_resolved: false
+    
+    - name: 'devops'
+      slack_configs:
+      - channel: '#kubernetes'
+        send_resolved: false
+        text: '<!channel> \nsummary: {{ .CommonAnnotations.summary }}\ndescription: {{.CommonAnnotations.description }}'
+      webhook_configs:
+      - url: 'http://eng-telegram-bot:8087'
+        send_resolved: false
+    
+    
+    - name: 'ittask'
+      webhook_configs:
+      - url: 'http://ittask.mateus/v1/webhooks/kubernetes-alerts
+        send_resolved: false
+

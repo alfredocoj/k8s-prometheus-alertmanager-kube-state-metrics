@@ -1,0 +1,43 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: alertmanager
+  namespace: tasks-monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alertmanager
+  template:
+    metadata:
+      name: alertmanager
+      labels:
+        app: alertmanager
+    spec:
+      containers:
+        - name: alertmanager
+          image: prom/alertmanager:v0.15.3
+          args:
+            - '--config.file=/etc/alertmanager/config.yml'
+            - '--storage.path=/alertmanager'
+          ports:
+            - name: alertmanager
+              containerPort: 9093
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/alertmanager
+            - name: alertmanager
+              mountPath: /alertmanager
+            - name: templates-volume
+              mountPath: /etc/alertmanager-templates
+      
+      volumes:
+        - name: config-volume
+          configMap:
+            name: alertmanager
+        - name: alertmanager
+          emptyDir: {}
+        - name: templates-volume
+            configMap:
+              name: alertmanager-templates
+              defaultMode: 420
