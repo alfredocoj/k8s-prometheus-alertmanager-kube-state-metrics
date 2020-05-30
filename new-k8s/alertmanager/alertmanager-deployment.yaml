@@ -1,8 +1,8 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: alertmanager
-  namespace: tasks-monitoring
+  namespace: monitoring
 spec:
   replicas: 1
   selector:
@@ -38,6 +38,6 @@ spec:
         - name: alertmanager
           emptyDir: {}
         - name: templates-volume
-            configMap:
-              name: alertmanager-templates
-              defaultMode: 420
+          configMap:
+            name: alertmanager-templates
+            #defaultMode: 420

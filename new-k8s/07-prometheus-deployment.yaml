@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus
+  namespace: monitoring
 spec:
   selector:
     matchLabels:
@@ -15,7 +16,7 @@ spec:
       serviceAccountName: prometheus
       containers:
         - name: prometheus
-          image: prom/prometheus:v2.18.1
+          image: prom/prometheus:v2.4.3
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus/"
@@ -32,6 +33,10 @@ spec:
             - name: rules-volume
               mountPath: /etc/prometheus-rules
 
+      securityContext:
+        fsGroup: 2000
+        runAsNonRoot: true
+        runAsUser: 1000
       volumes:
         - name: config-volume
           configMap:
