@@ -40,4 +40,4 @@ spec:
         - name: templates-volume
           configMap:
             name: alertmanager-templates
-            #defaultMode: 420
+            defaultMode: 420

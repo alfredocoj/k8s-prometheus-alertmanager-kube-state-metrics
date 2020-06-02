@@ -116,12 +116,12 @@ data:
       - url: 'http://eng-telegram-bot-chatbot:8097'
         send_resolved: false
     
-     - name: 'crm'
+    - name: 'crm'
       webhook_configs:
       - url: 'http://eng-telegram-bot-crm:8098'
         send_resolved: false
     
-     - name: 'dw'
+    - name: 'dw'
       webhook_configs:
       - url: 'http://eng-telegram-bot-dw:8099'
         send_resolved: false
@@ -140,9 +140,8 @@ data:
       - url: 'http://eng-telegram-bot:8087'
         send_resolved: false
     
-    
     - name: 'ittask'
       webhook_configs:
-      - url: 'http://ittask.mateus/v1/webhooks/kubernetes-alerts
+      - url: 'http://ittask.mateus/v1/webhooks/kubernetes-alerts'
         send_resolved: false
 

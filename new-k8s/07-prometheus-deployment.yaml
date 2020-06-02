@@ -33,6 +33,8 @@ spec:
             - name: rules-volume
               mountPath: /etc/prometheus-rules
 
+      nodeSelector:
+        kubernetes.io/hostname: k8s-node-01
       securityContext:
         fsGroup: 2000
         runAsNonRoot: true
