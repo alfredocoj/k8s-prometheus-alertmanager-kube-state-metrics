@@ -1,0 +1,46 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: prometheus-sm-kubelet
+  labels:
+    k8s-app: prometheus-sm-kubelet
+spec:
+  jobLabel: k8s-app
+  endpoints:
+    - port: http-metrics
+      scheme: http
+      interval: 30s
+      tlsConfig:
+        insecureSkipVerify: true
+      bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+    - port: http-metrics
+      scheme: http
+      path: /metrics/cadvisor
+      interval: 30s
+      honorLabels: true
+      tlsConfig:
+        insecureSkipVerify: true
+      bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+#  - basicAuth:
+#      password:
+#        name: basic-auth
+#        key: password
+#      username:
+#        name: basic-auth
+#        key: username
+  selector:
+    matchLabels:
+      k8s-app: prometheus-sm-kubelet
+  namespaceSelector:
+    matchNames:
+      - monitoring
+
+#---
+#apiVersion: v1
+#kind: Secret
+#metadata:
+#  name: basic-auth
+#data:
+#  password: YWRtaW5hZG1pbg==
+#  username: YWRtaW4=
+

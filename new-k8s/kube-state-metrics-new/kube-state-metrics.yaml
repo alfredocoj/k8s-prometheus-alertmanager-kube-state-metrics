@@ -4,7 +4,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: kube-state-metrics
-  namespace: monitoring
+  namespace: kube-system
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -12,14 +12,14 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: kube-state-metrics
-    namespace: monitoring
+    namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 # kubernetes versions before 1.8.0 should use rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   name: kube-state-metrics
-  namespace: monitoring
+  namespace: kube-system
 rules:
   - apiGroups:
       - ""
@@ -135,7 +135,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: kube-state-metrics
-  namespace: monitoring
+  namespace: kube-system
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -149,7 +149,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 # kubernetes versions before 1.8.0 should use rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
-  namespace: monitoring
+  namespace: kube-system
   name: kube-state-metrics-resizer
 rules:
   - apiGroups: [""]
@@ -166,13 +166,13 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: kube-state-metrics
-  namespace: monitoring
+  namespace: kube-system
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kube-state-metrics
-  namespace: monitoring
+  namespace: kube-system
 spec:
   selector:
     matchLabels:
@@ -230,7 +230,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: kube-state-metrics
-  namespace: monitoring
+  namespace: kube-system
   labels:
     k8s-app: kube-state-metrics
   annotations:

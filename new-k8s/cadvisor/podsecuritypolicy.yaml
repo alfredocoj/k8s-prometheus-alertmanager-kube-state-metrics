@@ -3,6 +3,7 @@ apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
   name: cadvisor
+  namespace: monitoring
 spec:
   privileged: true
   seLinux:
