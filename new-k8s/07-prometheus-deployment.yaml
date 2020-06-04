@@ -16,12 +16,13 @@ spec:
       serviceAccountName: prometheus
       containers:
         - name: prometheus
-          image: prom/prometheus:v2.2.1
-#          args:
-#            - "--config.file=/etc/prometheus/prometheus.yml"
-#            - "--storage.tsdb.path=/prometheus/"
-#            - "--web.enable-lifecycle"
-#            - "--storage.tsdb.no-lockfile"
+          image: prom/prometheus:v2.4.3
+          args:
+            - "--config.file=/etc/prometheus/prometheus.yml"
+            - "--storage.tsdb.path=/prometheus/"
+            - "--web.enable-lifecycle"
+            - "--storage.tsdb.no-lockfile"
+
           ports:
             - containerPort: 9090
               name: http
@@ -35,8 +36,8 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
-      nodeSelector:
-        kubernetes.io/hostname: k8s-node-01
+#      nodeSelector:
+#        kubernetes.io/hostname: k8s-node-01
 #      securityContext:
 #        fsGroup: 2000
 #        runAsNonRoot: true
