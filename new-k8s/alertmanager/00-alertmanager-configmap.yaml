@@ -8,7 +8,7 @@ data:
   config.yml: |-
     global:
       resolve_timeout: 5m
-      slack_api_url: "https://hooks.slack.com/services/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"
+      slack_api_url: "https://hooks.slack.com/services/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"
     
     templates:
     - '/etc/alertmanager-templates/*.tmpl'
@@ -68,67 +68,67 @@ data:
     receivers:
     - name: 'contabil'
       webhook_configs:
-      - url: 'http://eng-telegram-bot-contabil:8088'
+      - url: 'http://eng-telegram-bot:8080'
         send_resolved: false
     
     - name: 'rh'
       webhook_configs:
-      - url: 'http://eng-telegram-bot-rh:8089'
+      - url: 'http://eng-telegram-bot:8080'
         send_resolved: false
     
     - name: 'estoque'
       webhook_configs:
-      - url: 'http://eng-telegram-bot-estoque:8090'
+      - url: 'http://eng-telegram-bot:8080'
         send_resolved: false
     
     - name: 'financeiro'
       webhook_configs:
-      - url: 'http://eng-telegram-bot-financeiro:8091'
+      - url: 'http://eng-telegram-bot:8080'
         send_resolved: false
     
     - name: 'vendas'
       webhook_configs:
-      - url: 'http://eng-telegram-bot-vendas:8092'
+      - url: 'http://eng-telegram-bot:8080'
         send_resolved: false
     
     - name: 'wms'
       webhook_configs:
-      - url: 'http://eng-telegram-bot-wms:8093'
+      - url: 'http://eng-telegram-bot:8080'
         send_resolved: false
     
     - name: 'catchup'
       webhook_configs:
-      - url: 'http://eng-telegram-bot-catchup:8094'
+      - url: 'http://eng-telegram-bot:8080'
         send_resolved: false
     
     - name: 'compras'
       webhook_configs:
-      - url: 'http://eng-telegram-bot-compras:8095'
+      - url: 'http://eng-telegram-bot:8080'
         send_resolved: false
     
     - name: 'ecommerce'
       webhook_configs:
-      - url: 'http://eng-telegram-bot-ecommerce:8096'
+      - url: 'http://eng-telegram-bot:8080'
         send_resolved: false
     
     - name: 'chatbot'
       webhook_configs:
-      - url: 'http://eng-telegram-bot-chatbot:8097'
+      - url: 'http://eng-telegram-bot:8080'
         send_resolved: false
     
     - name: 'crm'
       webhook_configs:
-      - url: 'http://eng-telegram-bot-crm:8098'
+      - url: 'http://eng-telegram-bot:8080'
         send_resolved: false
     
     - name: 'dw'
       webhook_configs:
-      - url: 'http://eng-telegram-bot-dw:8099'
+      - url: 'http://eng-telegram-bot:8080'
         send_resolved: false
     
     - name: 'bank'
       webhook_configs:
-      - url: 'http://eng-telegram-bot-bank:8100'
+      - url: 'http://eng-telegram-bot:8080'
         send_resolved: false
     
     - name: 'devops'
@@ -137,7 +137,7 @@ data:
         send_resolved: false
         text: '<!channel> \nsummary: {{ .CommonAnnotations.summary }}\ndescription: {{.CommonAnnotations.description }}'
       webhook_configs:
-      - url: 'http://eng-telegram-bot:8087'
+      - url: 'http://eng-telegram-bot:8080'
         send_resolved: false
     
     - name: 'ittask'

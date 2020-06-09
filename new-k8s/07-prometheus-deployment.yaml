@@ -36,8 +36,8 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
-#      nodeSelector:
-#        kubernetes.io/hostname: k8s-node-01
+      nodeSelector:
+        kubernetes.io/hostname: k8s-s2-n02
 #      securityContext:
 #        fsGroup: 2000
 #        runAsNonRoot: true
