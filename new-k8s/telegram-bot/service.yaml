@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: eng-telegram-bot-service
+  namespace: monitoring
+  labels:
+    app: eng-telegram-bot
+spec:
+  ports:
+    - name: web
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: eng-telegram-bot

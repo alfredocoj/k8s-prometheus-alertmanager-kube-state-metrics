@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: eng-telegram-bot-configmap
+  namespace: monitoring
+data:
+  ALERTMANAGER_URL: http://alertmanager:9093
+  BOLT_PATH: /data/bot.db
+  STORE: bolt
+  LISTEN_ADDR: eng-telegram-bot-service:8080
+  TELEGRAM_ADMIN: "-456598003"
+  TEMPLATE_PATHS: /data/templates/default.tmpl

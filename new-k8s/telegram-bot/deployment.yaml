@@ -1,0 +1,53 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eng-telegram-bot-deploy
+  labels:
+    app: eng-telegram-bot
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eng-telegram-bot
+  template:
+    metadata:
+      labels:
+        app: eng-telegram-bot
+    spec:
+      containers:
+        - name: eng-telegram-bot
+          image: metalmatze/alertmanager-bot:0.4.2
+          ports:
+            - name: web
+              containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: eng-telegram-bot-secret
+                optional: false
+            - configMapRef:
+                name: eng-telegram-bot-configmap
+                optional: false
+          volumeMounts:
+            - name: eng-telegram-bot-data
+              mountPath: /data
+#            - name: eng-telegram-bot-template-vol
+#              mountPath: /data/templates/
+          resources:
+            limits:
+              cpu: 200m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+      nodeSelector:
+        kubernetes.io/hostname: k8s-s2-n02
+      volumes:
+        - name: eng-telegram-bot-data
+          persistentVolumeClaim:
+            claimName: eng-telegram-bot-pvc
+#        - name: eng-telegram-bot-template-vol
+#          configMap:
+#            name: eng-telegram-bot-tmpl
+#            defaultMode: 420
