@@ -68,67 +68,72 @@ data:
     receivers:
     - name: 'contabil'
       webhook_configs:
-      - url: 'http://eng-telegram-bot:8080'
+      - url: 'http://alertmanager-bot:8080'
         send_resolved: false
     
     - name: 'rh'
       webhook_configs:
-      - url: 'http://eng-telegram-bot:8080'
+      - url: 'http://alertmanager-bot:8080'
         send_resolved: false
     
     - name: 'estoque'
       webhook_configs:
-      - url: 'http://eng-telegram-bot:8080'
+      - url: 'http://alertmanager-bot:8080'
         send_resolved: false
     
     - name: 'financeiro'
       webhook_configs:
-      - url: 'http://eng-telegram-bot:8080'
+      - url: 'http://alertmanager-bot:8080'
         send_resolved: false
     
     - name: 'vendas'
       webhook_configs:
-      - url: 'http://eng-telegram-bot:8080'
+      - url: 'http://alertmanager-bot:8080'
         send_resolved: false
     
     - name: 'wms'
       webhook_configs:
-      - url: 'http://eng-telegram-bot:8080'
+      - url: 'http://alertmanager-bot:8080'
         send_resolved: false
     
     - name: 'catchup'
       webhook_configs:
-      - url: 'http://eng-telegram-bot:8080'
+      - url: 'http://alertmanager-bot:8080'
         send_resolved: false
     
     - name: 'compras'
       webhook_configs:
-      - url: 'http://eng-telegram-bot:8080'
+      - url: 'http://alertmanager-bot:8080'
         send_resolved: false
     
     - name: 'ecommerce'
       webhook_configs:
-      - url: 'http://eng-telegram-bot:8080'
+      - url: 'http://alertmanager-bot:8080'
         send_resolved: false
     
     - name: 'chatbot'
       webhook_configs:
-      - url: 'http://eng-telegram-bot:8080'
+      - url: 'http://alertmanager-bot:8080'
         send_resolved: false
     
     - name: 'crm'
       webhook_configs:
-      - url: 'http://eng-telegram-bot:8080'
+      - url: 'http://alertmanager-bot:8080'
         send_resolved: false
     
     - name: 'dw'
       webhook_configs:
-      - url: 'http://eng-telegram-bot:8080'
+      - url: 'http://alertmanager-bot:8080'
         send_resolved: false
     
     - name: 'bank'
       webhook_configs:
-      - url: 'http://eng-telegram-bot:8080'
+      - url: 'http://alertmanager-bot:8080'
+        send_resolved: false
+  
+    - name: 'pdv'
+      webhook_configs:
+      - url: 'http://alertmanager-bot:8080'
         send_resolved: false
     
     - name: 'devops'
@@ -137,7 +142,7 @@ data:
         send_resolved: false
         text: '<!channel> \nsummary: {{ .CommonAnnotations.summary }}\ndescription: {{.CommonAnnotations.description }}'
       webhook_configs:
-      - url: 'http://eng-telegram-bot:8080'
+      - url: 'http://alertmanager-bot:8080'
         send_resolved: false
     
     - name: 'ittask'
