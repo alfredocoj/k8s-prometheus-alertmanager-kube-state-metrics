@@ -48,7 +48,7 @@ data:
           summary: 'Falha durante a execução do webservice.'
           description: 'O container {{$labels.container}} no pod {{$labels.pod}} no namespace {{$labels.namespace}} falhou ao executar.'
         expr: |
-          (kube_pod_container_status_terminated_reason{pod=~"rh-rest.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+          (kube_pod_container_status_terminated_reason{pod=~"rh-rest.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0)
         for: 1m
         labels:
           team: rh
@@ -58,7 +58,7 @@ data:
           summary: 'Erro ao iniciar o container do webservice'
           description: 'Falha ao criar o container para o webservice - pod {{$labels.pod}} no namespace {{$labels.namespace}}.'
         expr: |
-          (kube_pod_container_status_waiting_reason{pod=~"rh-rest.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+          (kube_pod_container_status_waiting_reason{pod=~"rh-rest.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0)
         for: 1m
         labels:
           team: rh
@@ -68,11 +68,11 @@ data:
           summary: 'Falha ao iniciar o webservice.'
           description: 'Erro ao criar a estrutura para execução (Falta de recurso)'
         expr: |
-          kube_pod_status_unschedulable{pod=~"rh-rest.+"} * on(pod) (time() - kube_pod_created < 100)
+          kube_pod_status_unschedulable{pod=~"rh-rest.+"}
         for: 1m
         labels:
           team: rh
-    
+      
     - name: contabil-task
       rules:
       - alert: KubePodExecutionFailedContabilTask
@@ -109,20 +109,20 @@ data:
       rules:
       - alert: KubePodExecutionFailedContabilRest
         annotations:
-          summary: 'Falha durante a execução do webservice.'
+          summary: 'Falha durante a execução do webservice - {{ $labels.instance }}'
           description: 'O container {{$labels.container}} no pod {{$labels.pod}} no namespace {{$labels.namespace}} falhou ao executar.'
         expr: |
-          (kube_pod_container_status_terminated_reason{pod=~"contabil-rest.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+          (kube_pod_container_status_terminated_reason{pod=~"contabil-rest.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0)
         for: 1m
         labels:
           team: contabil
 
       - alert: KubeContainerCreatingErrorContabilRest
         annotations:
-          summary: 'Erro ao iniciar o container do webservice'
+          summary: 'Erro ao iniciar o container do webservice - {{ $labels.instance }}'
           description: 'Falha ao criar o container para a webservice - pod {{$labels.pod}} no namespace {{$labels.namespace}}.'
         expr: |
-          (kube_pod_container_status_waiting_reason{pod=~"contabil-rest.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+          (kube_pod_container_status_waiting_reason{pod=~"contabil-rest.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0)
         for: 1m
         labels:
           team: contabil
@@ -287,14 +287,14 @@ data:
         labels:
           team: estoque
   
-    - name: pdv-rest
+    - name: pdv
       rules:
       - alert: KubePodExecutionFailedPDV
         annotations:
           summary: 'Falha durante a execução do webservice.'
           description: 'O container {{$labels.container}} no pod {{$labels.pod}} no namespace {{$labels.namespace}} falhou ao executar.'
         expr: |
-          (kube_pod_container_status_terminated_reason{pod=~"pdv-rest.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+          (kube_pod_container_status_terminated_reason{pod=~"pdv.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
         for: 1m
         labels:
           team: pdv
@@ -304,7 +304,7 @@ data:
           summary: 'Erro ao iniciar o container do webservice'
           description: 'Falha ao criar o container para o webservice - pod {{$labels.pod}} no namespace {{$labels.namespace}}.'
         expr: |
-          (kube_pod_container_status_waiting_reason{pod=~"pdv-rest.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+          (kube_pod_container_status_waiting_reason{pod=~"pdv.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
         for: 1m
         labels:
           team: pdv
@@ -314,11 +314,33 @@ data:
           summary: 'Falha ao iniciar o webservice.'
           description: 'Erro ao criar a estrutura para execução (Falta de recurso)'
         expr: |
-          kube_pod_status_unschedulable{pod=~"pdv-rest.+"} * on(pod) (time() - kube_pod_created < 100)
+          kube_pod_status_unschedulable{pod=~"pdv.+"} * on(pod) (time() - kube_pod_created < 100)
         for: 1m
         labels:
           team: pdv
   
+    - name: maxipos
+      rules:
+      - alert: KubePodExecutionFailedPDV
+        annotations:
+          summary: 'Falha durante a execução do webservice.'
+          description: 'O container {{$labels.container}} no pod {{$labels.pod}} no namespace {{$labels.namespace}} falhou ao executar.'
+        expr: |
+          (kube_pod_container_status_terminated_reason{pod=~"tomcat.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+        for: 1m
+        labels:
+          team: maxipos
+
+      - alert: KubeContainerCreatingErrorPDV
+        annotations:
+          summary: 'Erro ao iniciar o container do webservice'
+          description: 'Falha ao criar o container para o webservice - pod {{$labels.pod}} no namespace {{$labels.namespace}}.'
+        expr: |
+          (kube_pod_container_status_waiting_reason{pod=~"tomcat.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+        for: 1m
+        labels:
+          team: maxipos
+    
     - name: catchup-rest
       rules:
       - alert: KubePodExecutionFailedCatchupRest
@@ -329,7 +351,7 @@ data:
           (kube_pod_container_status_terminated_reason{pod=~"catchup-rest.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
         for: 1m
         labels:
-          team: pdv
+          team: catchup
 
       - alert: KubeContainerCreatingErrorCatchupRest
         annotations:
@@ -339,7 +361,7 @@ data:
           (kube_pod_container_status_waiting_reason{pod=~"catchup-rest.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
         for: 1m
         labels:
-          team: pdv
+          team: catchup
 
       - alert: KubePodUnschedulableCatchupRest
         annotations:
@@ -349,5 +371,13 @@ data:
           kube_pod_status_unschedulable{pod=~"catchup-rest.+"} * on(pod) (time() - kube_pod_created < 100)
         for: 1m
         labels:
-          team: pdv
+          team: catchup
 
+#- alert: High Pod Memory
+#    expr: sum(container_memory_usage_bytes{pod=~"rh-rest.+"}) > 1
+#    for: 1m
+#    labels:
+#      team: rh
+#    annotations:
+#      summary: "High Memory Usage: {{ $labels.instance }}"
+#      description: 'Erro ao criar a estrutura para execução (Falta de recurso) - (current value: {{ $value }} bytes)'

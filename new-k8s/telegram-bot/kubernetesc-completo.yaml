@@ -31,13 +31,53 @@ spec:
       storage: 1Gi
   storageClassName: standard
 ---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: alertmanager-bot-templates
+  namespace: monitoring
+data:
+  default.tmpl: |-
+    {{ define "telegram.default" }}
+    {{ range .Alerts }}
+    {{ if eq .Status "firing"}}❌ <b>Alerta de falha</b> ❌{{ else }}✅ <b>Resolvido</b> ✅{{ end }}
+    <b>{{ .Labels.alertname }}</b>
+    <b>Aplicacao</b>:  {{ .Labels.container }}
+    <b>Pod</b>:  {{ .Labels.pod }}
+    <b>Namespace</b>:  {{ .Labels.namespace }}
+    <b>Causa</b>: {{ .Labels.reason }}
+    <b>Descricao</b>: {{ .Annotations.description }}
+    {{ .Annotations.message }}
+    <b>Duration:</b> {{ duration .StartsAt .EndsAt }}{{ if ne .Status "firing"}}
+    <b>Ended:</b> {{ .EndsAt | since }}{{ end }}
+    {{ end }}
+    {{ end }}
+
+---
+# {{ if eq .Status "firing"}}🔥 <b>{{ .Status | toUpper }}</b> 🔥{{ else }}<b>{{ .Status | toUpper }}</b>{{ end }}
+#  telegram.tmpl: |
+#    {{ define "telegram.default" }}
+#    {{ range .Alerts }}
+#    {{ if eq .Status "firing"}}🔥 <b>{{ .Status | toUpper }}</b> 🔥{{ else }}<b>{{ .Status | toUpper }}</b>{{ end }}
+#    <b>{{ .Labels.alertname }}</b>
+#    {{ .Annotations.message }}
+#    <b>Duration:</b> {{ duration .StartsAt .EndsAt }}{{ if ne .Status "firing"}}
+#    <b>Ended:</b> {{ .EndsAt | since }}
+#    {{ end }}
+#    {{ end }}
+#<b>Aplicacao</b>:  {{ .Labels.container }}
+#    <b>Pod</b>:  {{ .Labels.pod }}
+#    <b>Namespace</b>:  {{ .Labels.namespace }}
+#    <b>Mensagem</b>: {{ .Annotations.summary }}
+#    <b>Causa</b>: {{ .Labels.reason }}
 apiVersion: v1
 items:
   - apiVersion: v1
     data:
       # echo -n '-456598003' | base64
+      # echo -n '670049758' | base64
       # echo -n '864218369:AAELCFsOI-GFVZvph0_JN8ZCPnLzyC2hb3w' | base64
-      admin: LTQ1NjU5ODAwMw==
+      admin: NjcwMDQ5NzU4
       token: ODY0MjE4MzY5OkFBRUxDRnNPSS1HRlZadnBoMF9KTjhaQ1BuTHp5QzJoYjN3
     kind: Secret
     metadata:
@@ -83,7 +123,7 @@ items:
         spec:
           containers:
             - args:
-                - --alertmanager.url=http://localhost:9093
+                - --alertmanager.url=http://alertmanager.monitoring.svc:9093
                 - --log.level=info
                 - --store=bolt
                 - --bolt.path=/data/bot.db
@@ -98,6 +138,10 @@ items:
                     secretKeyRef:
                       key: token
                       name: alertmanager-bot
+#                - name: LISTEN_ADDR
+#                  value: "http://0.0.0.0:8080"
+                - name: ALERTMANAGER_URL
+                  value: "http://alertmanager.monitoring.svc:9093"
               image: metalmatze/alertmanager-bot:0.4.2
               imagePullPolicy: IfNotPresent
               name: alertmanager-bot
@@ -114,11 +158,17 @@ items:
               volumeMounts:
                 - mountPath: /data
                   name: alertmanager-bot-pvc
+                - name: templates-volume
+                  mountPath: /templates
           restartPolicy: Always
           volumes:
             - name: alertmanager-bot-pvc
               persistentVolumeClaim:
                 claimName: alertmanager-bot-pvc
+            - name: templates-volume
+              configMap:
+                name: alertmanager-bot-templates
+                defaultMode: 420
 #      volumeClaimTemplates:
 #        - apiVersion: v1
 #          kind: PersistentVolumeClaim

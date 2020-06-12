@@ -8,7 +8,7 @@ data:
   config.yml: |-
     global:
       resolve_timeout: 5m
-      slack_api_url: "https://hooks.slack.com/services/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"
+      slack_api_url: "https://hooks.slack.com/services/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"
     
     templates:
     - '/etc/alertmanager-templates/*.tmpl'
@@ -69,84 +69,85 @@ data:
     - name: 'contabil'
       webhook_configs:
       - url: 'http://alertmanager-bot:8080'
-        send_resolved: false
+        send_resolved: true
     
     - name: 'rh'
       webhook_configs:
       - url: 'http://alertmanager-bot:8080'
-        send_resolved: false
+        send_resolved: true
     
     - name: 'estoque'
       webhook_configs:
       - url: 'http://alertmanager-bot:8080'
-        send_resolved: false
+        send_resolved: true
     
     - name: 'financeiro'
       webhook_configs:
       - url: 'http://alertmanager-bot:8080'
-        send_resolved: false
+        send_resolved: true
     
     - name: 'vendas'
       webhook_configs:
       - url: 'http://alertmanager-bot:8080'
-        send_resolved: false
+        send_resolved: true
     
     - name: 'wms'
       webhook_configs:
       - url: 'http://alertmanager-bot:8080'
-        send_resolved: false
+        send_resolved: true
     
     - name: 'catchup'
       webhook_configs:
       - url: 'http://alertmanager-bot:8080'
-        send_resolved: false
+        send_resolved: true
     
     - name: 'compras'
       webhook_configs:
       - url: 'http://alertmanager-bot:8080'
-        send_resolved: false
+        send_resolved: true
     
     - name: 'ecommerce'
       webhook_configs:
       - url: 'http://alertmanager-bot:8080'
-        send_resolved: false
+        send_resolved: true
     
     - name: 'chatbot'
       webhook_configs:
       - url: 'http://alertmanager-bot:8080'
-        send_resolved: false
+        send_resolved: true
     
     - name: 'crm'
       webhook_configs:
       - url: 'http://alertmanager-bot:8080'
-        send_resolved: false
+        send_resolved: true
     
     - name: 'dw'
       webhook_configs:
       - url: 'http://alertmanager-bot:8080'
-        send_resolved: false
+        send_resolved: true
     
     - name: 'bank'
       webhook_configs:
       - url: 'http://alertmanager-bot:8080'
-        send_resolved: false
+        send_resolved: true
   
     - name: 'pdv'
       webhook_configs:
       - url: 'http://alertmanager-bot:8080'
-        send_resolved: false
+        send_resolved: true
     
     - name: 'devops'
       slack_configs:
-      - channel: '#kubernetes'
-        send_resolved: false
+      - channel: '#devops-infra'
+        send_resolved: true
         text: '<!channel> \nsummary: {{ .CommonAnnotations.summary }}\ndescription: {{.CommonAnnotations.description }}'
+        api_url: "https://hooks.slack.com/services/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"
       webhook_configs:
       - url: 'http://alertmanager-bot:8080'
-        send_resolved: false
+        send_resolved: true
     
     - name: 'ittask'
       webhook_configs:
       - url: 'http://ittask.mateus/v1/webhooks/kubernetes-alerts'
-        send_resolved: false
+        send_resolved: true
 

@@ -20,7 +20,7 @@ data:
         - scheme: http
           path_prefix: /
           static_configs:
-            - targets: ['alertmanager:9093']
+            - targets: ['alertmanager.monitoring.svc:9093']
   
     scrape_configs:
     - job_name: 'kubernetes-kubelet'
@@ -57,7 +57,7 @@ data:
         regex: (.+)
         target_label: __metrics_path__
         replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
-    - job_name: 'kubernetes-kube-state'
+    - job_name: 'ping'
       kubernetes_sd_configs:
       - role: pod
       relabel_configs:
@@ -76,3 +76,6 @@ data:
         regex: 'node-exporter;(.*)'
         action: replace
         target_label: nodename
+    - job_name: 'kube-state-metrics'
+      static_configs:
+      - targets: ['kube-state-metrics.kube-system.svc:8080', 'kube-state-metrics.kube-system.svc:8081']
