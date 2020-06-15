@@ -372,6 +372,38 @@ data:
         for: 1m
         labels:
           team: catchup
+  
+    - name: qt
+      rules:
+      - alert: KubePodExecutionFailedCatchupQt
+        annotations:
+          summary: 'Falha durante a execução do service.'
+          description: 'O container {{$labels.container}} no pod {{$labels.pod}} no namespace {{$labels.namespace}} falhou ao executar.'
+        expr: |
+          (kube_pod_container_status_terminated_reason{pod=~"qt.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+        for: 1m
+        labels:
+          team: catchup
+
+      - alert: KubeContainerCreatingErrorCatchupQt
+        annotations:
+          summary: 'Erro ao iniciar o container do service'
+          description: 'Falha ao criar o container para o service - pod {{$labels.pod}} no namespace {{$labels.namespace}}.'
+        expr: |
+          (kube_pod_container_status_waiting_reason{pod=~"qt.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+        for: 1m
+        labels:
+          team: catchup
+
+      - alert: KubePodUnschedulableCatchupQt
+        annotations:
+          summary: 'Falha ao iniciar o service.'
+          description: 'Erro ao criar a estrutura para execução (Falta de recurso)'
+        expr: |
+          kube_pod_status_unschedulable{pod=~"qt.+"} * on(pod) (time() - kube_pod_created < 100)
+        for: 1m
+        labels:
+          team: catchup
 
 #- alert: High Pod Memory
 #    expr: sum(container_memory_usage_bytes{pod=~"rh-rest.+"}) > 1
