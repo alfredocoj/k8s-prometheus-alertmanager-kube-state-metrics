@@ -76,9 +76,9 @@ items:
     data:
       # echo -n '-456598003' | base64
       # echo -n '670049758' | base64
-      # echo -n '864218369:AAELCFsOI-GFVZvph0_JN8ZCPnLzyC2hb3w' | base64
+      # echo -n '1166279456:AAEDaBRU9dKSEVdpK8hBJfJBxoiAObnsEwA' | base64
       admin: NjcwMDQ5NzU4
-      token: ODY0MjE4MzY5OkFBRUxDRnNPSS1HRlZadnBoMF9KTjhaQ1BuTHp5QzJoYjN3
+      token: MTE2NjI3OTQ1NjpBQUVEYUJSVTlkS1NFVmRwSzhoQkpmSkJ4b2lBT2Juc0V3QQ==
     kind: Secret
     metadata:
       labels:
