@@ -1,0 +1,188 @@
+apiVersion: "v1"
+kind: "PersistentVolume"
+metadata:
+  name: alertmanager-bot-contabil-pv
+  namespace: monitoring
+spec:
+  capacity:
+    storage: 1Gi
+  claimRef:
+    namespace: monitoring
+    name: alertmanager-bot-contabil-pvc
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app.kubernetes.io/name: alertmanager-bot-contabil
+  name: alertmanager-bot-contabil-pvc
+  namespace: monitoring
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeName: alertmanager-bot-contabil-pv
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: standard
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: alertmanager-bot-contabil-templates
+  namespace: monitoring
+data:
+  default.tmpl: |-
+    {{ define "telegram.default" }}
+    {{ range .Alerts }}
+    {{ if eq .Status "firing"}}❌ <b>Alerta de falha</b> ❌{{ else }}✅ <b>Resolvido</b> ✅{{ end }}
+    <b>{{ .Labels.alertname }}</b>
+    <b>Aplicacao</b>:  {{ .Labels.container }}
+    <b>Pod</b>:  {{ .Labels.pod }}
+    <b>Namespace</b>:  {{ .Labels.namespace }}
+    <b>Causa</b>: {{ .Labels.reason }}
+    <b>Descricao</b>: {{ .Annotations.description }}
+    {{ .Annotations.message }}
+    <b>Duration:</b> {{ duration .StartsAt .EndsAt }}{{ if ne .Status "firing"}}
+    <b>Ended:</b> {{ .EndsAt | since }}{{ end }}
+    {{ end }}
+    {{ end }}
+
+---
+# {{ if eq .Status "firing"}}🔥 <b>{{ .Status | toUpper }}</b> 🔥{{ else }}<b>{{ .Status | toUpper }}</b>{{ end }}
+#  telegram.tmpl: |
+#    {{ define "telegram.default" }}
+#    {{ range .Alerts }}
+#    {{ if eq .Status "firing"}}🔥 <b>{{ .Status | toUpper }}</b> 🔥{{ else }}<b>{{ .Status | toUpper }}</b>{{ end }}
+#    <b>{{ .Labels.alertname }}</b>
+#    {{ .Annotations.message }}
+#    <b>Duration:</b> {{ duration .StartsAt .EndsAt }}{{ if ne .Status "firing"}}
+#    <b>Ended:</b> {{ .EndsAt | since }}
+#    {{ end }}
+#    {{ end }}
+#<b>Aplicacao</b>:  {{ .Labels.container }}
+#    <b>Pod</b>:  {{ .Labels.pod }}
+#    <b>Namespace</b>:  {{ .Labels.namespace }}
+#    <b>Mensagem</b>: {{ .Annotations.summary }}
+#    <b>Causa</b>: {{ .Labels.reason }}
+apiVersion: v1
+items:
+  - apiVersion: v1
+    data:
+      # echo -n '-456598003' | base64
+      # echo -n '670049758' | base64
+      # echo -n '1166279456:AAEDaBRU9dKSEVdpK8hBJfJBxoiAObnsEwA' | base64 ## id do dono do bot
+      # echo -n '1380745483:AAF7nYSfjFXE_a92eyeY4gAXV2Y_ApJG8qA' | base64   ## token do bot
+      admin: NjcwMDQ5NzU4
+      token: MTM4MDc0NTQ4MzpBQUY3bllTZmpGWEVfYTkyZXllWTRnQVhWMllfQXBKRzhxQQ==
+    kind: Secret
+    metadata:
+      labels:
+        app.kubernetes.io/name: alertmanager-bot-contabil
+      name: alertmanager-bot-contabil
+      namespace: monitoring
+    type: Opaque
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        app.kubernetes.io/name: alertmanager-bot-contabil
+      name: alertmanager-bot-contabil
+      namespace: monitoring
+    spec:
+      ports:
+        - name: http
+          port: 8080
+          targetPort: 8080
+      selector:
+        app.kubernetes.io/name: alertmanager-bot-contabil
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        app.kubernetes.io/name: alertmanager-bot-contabil
+      name: alertmanager-bot-contabil
+      namespace: monitoring
+    spec:
+      #podManagementPolicy: OrderedReady
+      replicas: 1
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: alertmanager-bot-contabil
+      #serviceName: alertmanager-bot-contabil
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: alertmanager-bot-contabil
+          name: alertmanager-bot-contabil
+          namespace: monitoring
+        spec:
+          containers:
+            - args:
+                - --alertmanager.url=http://alertmanager.monitoring.svc:9093
+                - --log.level=info
+                - --store=bolt
+                - --bolt.path=/data/bot.db
+              env:
+                - name: TELEGRAM_ADMIN
+                  valueFrom:
+                    secretKeyRef:
+                      key: admin
+                      name: alertmanager-bot-contabil
+                - name: TELEGRAM_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      key: token
+                      name: alertmanager-bot-contabil
+#                - name: LISTEN_ADDR
+#                  value: "http://0.0.0.0:8080"
+                - name: ALERTMANAGER_URL
+                  value: "http://alertmanager.monitoring.svc:9093"
+              image: metalmatze/alertmanager-bot:0.4.2
+              imagePullPolicy: IfNotPresent
+              name: alertmanager-bot-contabil
+              ports:
+                - containerPort: 8080
+                  name: http
+              resources:
+                limits:
+                  cpu: 100m
+                  memory: 128Mi
+                requests:
+                  cpu: 25m
+                  memory: 64Mi
+              volumeMounts:
+                - mountPath: /data
+                  name: alertmanager-bot-contabil-pvc
+                - name: templates-volume
+                  mountPath: /templates
+          restartPolicy: Always
+          volumes:
+            - name: alertmanager-bot-contabil-pvc
+              persistentVolumeClaim:
+                claimName: alertmanager-bot-contabil-pvc
+            - name: templates-volume
+              configMap:
+                name: alertmanager-bot-contabil-templates
+                defaultMode: 420
+#      volumeClaimTemplates:
+#        - apiVersion: v1
+#          kind: PersistentVolumeClaim
+#          metadata:
+#            labels:
+#              app.kubernetes.io/name: alertmanager-bot-contabil
+#            name: alertmanager-bot-contabil-pvc
+#            namespace: monitoring
+#          spec:
+#            accessModes:
+#              - ReadWriteOnce
+#            resources:
+#              requests:
+#                storage: 1Gi
+#            storageClassName: standard
+kind: List
