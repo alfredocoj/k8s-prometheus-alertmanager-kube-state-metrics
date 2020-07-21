@@ -68,7 +68,7 @@ data:
     receivers:
     - name: 'contabil'
       webhook_configs:
-      - url: 'http://alertmanager-bot:8080'
+      - url: 'http://alertmanager-bot-contabil.monitoring.svc:8080'
         send_resolved: true
     
     - name: 'rh'
@@ -133,7 +133,7 @@ data:
   
     - name: 'pdv'
       webhook_configs:
-      - url: 'http://alertmanager-bot:8080'
+      - url: 'http://alertmanager-bot-pdv:8080'
         send_resolved: true
     
     - name: 'devops'

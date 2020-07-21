@@ -16,7 +16,7 @@ data:
           summary: 'Falha durante a execução da task.'
           description: 'O container {{$labels.container}} no pod {{$labels.pod}} no namespace {{$labels.namespace}} falhou ao executar.'
         expr: |
-          (kube_pod_container_status_terminated_reason{pod=~"rh-task.+",pod!~".+scdf.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+          (kube_pod_container_status_terminated_reason{namespace="java-task", pod=~"rh-task.+",pod!~".+scdf.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
         for: 1m
         labels:
           team: rh
@@ -26,7 +26,7 @@ data:
           summary: 'Erro ao iniciar o container da task'
           description: 'Falha ao criar o container para a task - pod {{$labels.pod}} no namespace {{$labels.namespace}}.'
         expr: |
-          (kube_pod_container_status_waiting_reason{pod=~"rh-task.+",pod!~".+scdf.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+          (kube_pod_container_status_waiting_reason{namespace="java-task", pod=~"rh-task.+",pod!~".+scdf.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
         for: 1m
         labels:
           team: rh
@@ -36,7 +36,7 @@ data:
           summary: 'Falha ao iniciar a task.'
           description: 'Erro ao criar a estrutura para execução (Falta de recurso)'
         expr: |
-          kube_pod_status_unschedulable{pod=~"rh-task.+",pod!~".+scdf.+"} * on(pod) (time() - kube_pod_created < 100)
+          kube_pod_status_unschedulable{namespace="java-task", pod=~"rh-task.+",pod!~".+scdf.+"} * on(pod) (time() - kube_pod_created < 100)
         for: 1m
         labels:
           team: rh
@@ -48,7 +48,7 @@ data:
           summary: 'Falha durante a execução da task.'
           description: 'O container {{$labels.container}} no pod {{$labels.pod}} no namespace {{$labels.namespace}} falhou ao executar.'
         expr: |
-          (kube_pod_container_status_terminated_reason{pod=~"contabil-task.+",pod!~".+scdf.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+          (kube_pod_container_status_terminated_reason{namespace="java-task", pod=~"contabil-task.+",pod!~".+scdf.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
         for: 1m
         labels:
           team: contabil
@@ -58,7 +58,7 @@ data:
           summary: 'Erro ao iniciar o container da task'
           description: 'Falha ao criar o container para a task - pod {{$labels.pod}} no namespace {{$labels.namespace}}.'
         expr: |
-          (kube_pod_container_status_waiting_reason{pod=~"contabil-task.+",pod!~".+scdf.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+          (kube_pod_container_status_waiting_reason{namespace="java-task", pod=~"contabil-task.+",pod!~".+scdf.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
         for: 1m
         labels:
           team: contabil
@@ -68,11 +68,33 @@ data:
           summary: 'Falha ao iniciar a task.'
           description: 'Erro ao criar a estrutura para execução (Falta de recurso)'
         expr: |
-          kube_pod_status_unschedulable{pod=~"contabil-task.+",pod!~".+scdf.+"} * on(pod) (time() - kube_pod_created < 100)
+          kube_pod_status_unschedulable{namespace="java-task", pod=~"contabil-task.+",pod!~".+scdf.+"} * on(pod) (time() - kube_pod_created < 100)
         for: 1m
         labels:
           team: contabil
   
+    - name: contabil-rest
+      rules:
+      - alert: KubePodExecutionFailedContabilRest
+        annotations:
+          summary: 'Falha durante a execução do webservice - {{ $labels.instance }}'
+          description: 'O container {{$labels.container}} no pod {{$labels.pod}} no namespace {{$labels.namespace}} falhou ao executar.'
+        expr: |
+          (kube_pod_container_status_terminated_reason{namespace="java-pro", pod=~"contabil-rest.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0)
+        for: 1m
+        labels:
+          team: contabil
+
+      - alert: KubeContainerCreatingErrorContabilRest
+        annotations:
+          summary: 'Erro ao iniciar o container do webservice - {{ $labels.instance }}'
+          description: 'Falha ao criar o container para a webservice - pod {{$labels.pod}} no namespace {{$labels.namespace}}.'
+        expr: |
+          (kube_pod_container_status_waiting_reason{namespace="java-pro", pod=~"contabil-rest.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0)
+        for: 1m
+        labels:
+          team: contabil
+    
     - name: estoque-task
       rules:
       - alert: KubePodExecutionFailedEstoqueTask
@@ -80,7 +102,7 @@ data:
           summary: 'Falha durante a execução da task.'
           description: 'O container {{$labels.container}} no pod {{$labels.pod}} no namespace {{$labels.namespace}} falhou ao executar.'
         expr: |
-          (kube_pod_container_status_terminated_reason{pod=~"estoque-task.+",pod!~".+scdf.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+          (kube_pod_container_status_terminated_reason{namespace="java-task", pod=~"estoque-task.+",pod!~".+scdf.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
         for: 1m
         labels:
           team: estoque
@@ -90,7 +112,7 @@ data:
           summary: 'Erro ao iniciar o container da task'
           description: 'Falha ao criar o container para a task - pod {{$labels.pod}} no namespace {{$labels.namespace}}.'
         expr: |
-          (kube_pod_container_status_waiting_reason{pod=~"estoque-task.+",pod!~".+scdf.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+          (kube_pod_container_status_waiting_reason{namespace="java-task", pod=~"estoque-task.+",pod!~".+scdf.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
         for: 1m
         labels:
           team: estoque
@@ -100,7 +122,7 @@ data:
           summary: 'Falha ao iniciar a task.'
           description: 'Erro ao criar a estrutura para execução (Falta de recurso)'
         expr: |
-          kube_pod_status_unschedulable{pod=~"estoque-task.+",pod!~".+scdf.+"} * on(pod) (time() - kube_pod_created < 100)
+          kube_pod_status_unschedulable{namespace="java-task", pod=~"estoque-task.+",pod!~".+scdf.+"} * on(pod) (time() - kube_pod_created < 100)
         for: 1m
         labels:
           team: estoque
@@ -112,7 +134,7 @@ data:
           summary: 'Falha durante a execução da task.'
           description: 'O container {{$labels.container}} no pod {{$labels.pod}} no namespace {{$labels.namespace}} falhou ao executar.'
         expr: |
-          (kube_pod_container_status_terminated_reason{pod=~"financeiro-task.+",pod!~".+scdf.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+          (kube_pod_container_status_terminated_reason{namespace="java-task", pod=~"financeiro-task.+",pod!~".+scdf.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
         for: 1m
         labels:
           team: financeiro
@@ -122,7 +144,7 @@ data:
           summary: 'Erro ao iniciar o container da task'
           description: 'Falha ao criar o container para a task - pod {{$labels.pod}} no namespace {{$labels.namespace}}.'
         expr: |
-          (kube_pod_container_status_waiting_reason{pod=~"financeiro-task.+",pod!~".+scdf.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+          (kube_pod_container_status_waiting_reason{namespace="java-task", pod=~"financeiro-task.+",pod!~".+scdf.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
         for: 1m
         labels:
           team: financeiro
@@ -132,7 +154,7 @@ data:
           summary: 'Falha ao iniciar a task.'
           description: 'Erro ao criar a estrutura para execução (Falta de recurso)'
         expr: |
-          kube_pod_status_unschedulable{pod=~"financeiro-task.+",pod!~".+scdf.+"} * on(pod) (time() - kube_pod_created < 100)
+          kube_pod_status_unschedulable{namespace="java-task", pod=~"financeiro-task.+",pod!~".+scdf.+"} * on(pod) (time() - kube_pod_created < 100)
         for: 1m
         labels:
           team: financeiro
@@ -144,7 +166,7 @@ data:
           summary: 'Falha durante a execução do webservice.'
           description: 'O container {{$labels.container}} no pod {{$labels.pod}} no namespace {{$labels.namespace}} falhou ao executar.'
         expr: |
-          (kube_pod_container_status_terminated_reason{pod=~"pdv.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+          (kube_pod_container_status_terminated_reason{namespace="java-pro", pod=~"pdv.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
         for: 1m
         labels:
           team: pdv
@@ -154,7 +176,7 @@ data:
           summary: 'Erro ao iniciar o container do webservice'
           description: 'Falha ao criar o container para o webservice - pod {{$labels.pod}} no namespace {{$labels.namespace}}.'
         expr: |
-          (kube_pod_container_status_waiting_reason{pod=~"pdv.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
+          (kube_pod_container_status_waiting_reason{namespace="java-pro", pod=~"pdv.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0) * on(pod) (time() - kube_pod_start_time < 100)
         for: 1m
         labels:
           team: pdv
@@ -164,7 +186,7 @@ data:
           summary: 'Falha ao iniciar o webservice.'
           description: 'Erro ao criar a estrutura para execução (Falta de recurso)'
         expr: |
-          kube_pod_status_unschedulable{pod=~"pdv.+"} * on(pod) (time() - kube_pod_created < 100)
+          kube_pod_status_unschedulable{namespace="java-pro", pod=~"pdv.+"} * on(pod) (time() - kube_pod_created < 100)
         for: 1m
         labels:
           team: pdv
@@ -176,7 +198,7 @@ data:
           summary: 'Falha durante a execução do service.'
           description: 'O container {{$labels.container}} no pod {{$labels.pod}} no namespace {{$labels.namespace}} falhou ao executar.'
         expr: |
-          (kube_pod_container_status_terminated_reason{pod=~"gmcore.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0)
+          (kube_pod_container_status_terminated_reason{namespace="qt-pro", pod=~"gmcore.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0)
         for: 1m
         labels:
           team: estoque
@@ -186,7 +208,7 @@ data:
           summary: 'Erro ao iniciar o container do service'
           description: 'Falha ao criar o container para o service - pod {{$labels.pod}} no namespace {{$labels.namespace}}.'
         expr: |
-          (kube_pod_container_status_waiting_reason{pod=~"gmcore.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0)
+          (kube_pod_container_status_waiting_reason{namespace="qt-pro", pod=~"gmcore.+",reason=~"CrashLoopBackOff|ErrImagePull|ImagePullBackOff|CreateContainerConfigError|InvalidImageName|CreateContainerError"}  > 0)
         for: 1m
         labels:
           team: estoque
@@ -196,10 +218,20 @@ data:
           summary: 'Falha ao iniciar o service.'
           description: 'Erro ao criar a estrutura para execução (Falta de recurso)'
         expr: |
-          kube_pod_status_unschedulable{pod=~"gmcore.+"}
+          kube_pod_status_unschedulable{namespace="qt-pro", pod=~"gmcore.+"}
         for: 1m
         labels:
           team: estoque
+      
+#      - alert: JobFailed
+#        expr: kube_job_status_failed{namespace="java-task", instance="kube-state-metrics.kube-system.svc:8080"} > 0
+#        for: 5m
+#        labels:
+#          team: contabil
+#          severity: warning
+#        annotations:
+#          description: Job {{$labels.namespaces}}/{{$labels.job}} failed to complete
+#          summary: Job failed
     
 #    - name: estoque-rest
 #      rules:
@@ -358,7 +390,7 @@ data:
 #          summary: 'Falha durante a execução do webservice - {{ $labels.instance }}'
 #          description: 'O container {{$labels.container}} no pod {{$labels.pod}} no namespace {{$labels.namespace}} falhou ao executar.'
 #        expr: |
-#          (kube_pod_container_status_terminated_reason{pod=~"contabil-rest.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0)
+#          (kube_pod_container_status_terminated_reason{namespace="java-pro", pod=~"contabil-rest.+",reason=~"OOMKilled|Error|ContainerCannotRun|DeadlineExceeded"}  > 0)
 #        for: 1m
 #        labels:
 #          team: contabil

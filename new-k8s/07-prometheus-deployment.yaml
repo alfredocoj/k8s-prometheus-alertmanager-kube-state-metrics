@@ -22,6 +22,7 @@ spec:
             - "--storage.tsdb.path=/prometheus/"
             - "--web.enable-lifecycle"
             - "--storage.tsdb.no-lockfile"
+            #- '--storage.tsdb.retention=7d'
 
           ports:
             - containerPort: 9090
@@ -38,8 +39,8 @@ spec:
             readOnlyRootFilesystem: true
           resources:
             limits:
-              cpu: 1000m
-              memory: 2048Mi
+              cpu: '1'
+              memory: 2Gi
             requests:
               cpu: 200m
               memory: 200Mi
